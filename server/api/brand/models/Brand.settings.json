@@ -20,6 +20,10 @@
       "model": "file",
       "via": "related",
       "plugin": "upload"
+    },
+    "brews": {
+      "collection": "brew",
+      "via": "brand"
     }
   }
 }
