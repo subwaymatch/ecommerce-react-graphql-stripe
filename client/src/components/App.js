@@ -75,7 +75,11 @@ class App extends Component {
           />
 
           <Box margin={2}>
-            <Icon icon="filter" color={searchTerm ? "orange" : "gray"} />
+            <Icon
+              icon="filter"
+              accessibilityLabel="Filter Icon"
+              color={searchTerm ? "orange" : "gray"}
+            />
           </Box>
         </Box>
 
