@@ -12,6 +12,7 @@ import {
 import { Link } from "react-router-dom";
 import "./App.css";
 import Strapi from "strapi-sdk-javascript/build/main";
+import Loader from "./Loader";
 
 const apiUrl = process.env.API_URL || "http://localhost:1337";
 const strapi = new Strapi(apiUrl);
@@ -19,7 +20,8 @@ const strapi = new Strapi(apiUrl);
 class App extends Component {
   state = {
     brands: [],
-    searchTerm: ""
+    searchTerm: "",
+    isLoadingBrands: true
   };
 
   async componentDidMount() {
@@ -38,10 +40,10 @@ class App extends Component {
             }`
         }
       });
-      this.setState({ brands: response.data.brands });
-      console.log(this.state.brands);
+      this.setState({ brands: response.data.brands, isLoadingBrands: false });
     } catch (err) {
       console.error(err);
+      this.setState({ isLoadingBrands: false });
     }
   }
 
@@ -49,8 +51,18 @@ class App extends Component {
     this.setState({ searchTerm: value });
   };
 
+  filteredBrands = ({ searchTerm, brands }) => {
+    return brands.filter(brand => {
+      return (
+        brand.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        brand.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+  };
+
   render() {
-    const { brands, searchTerm } = this.state;
+    const { searchTerm, isLoadingBrands } = this.state;
+
     return (
       <Container>
         {/* Brands Search Field */}
@@ -58,6 +70,7 @@ class App extends Component {
           <SearchField
             id="searchField"
             accessibilityLabel="Brands Search Field"
+            value={this.state.searchTerm}
             onChange={this.handleChange}
           />
 
@@ -85,7 +98,7 @@ class App extends Component {
           display="flex"
           justifyContent="around"
         >
-          {brands.map(brand => (
+          {this.filteredBrands(this.state).map(brand => (
             <Box paddingY={4} width={200} margin={2} key={brand._id}>
               <Card
                 image={
@@ -118,6 +131,8 @@ class App extends Component {
             </Box>
           ))}
         </Box>
+
+        <Loader show={isLoadingBrands} />
       </Container>
     );
   }
