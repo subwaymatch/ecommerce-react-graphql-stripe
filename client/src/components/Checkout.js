@@ -9,10 +9,16 @@ import {
   Modal,
   Spinner
 } from "gestalt";
+import {
+  Elements,
+  StripeProvider,
+  CardElement,
+  injectStripe
+} from "react-stripe-elements";
 import ToastMessage from "./ToastMessage";
 import { getCart, calculatePrice } from "./../utils";
 
-class Checkout extends React.Component {
+class _CheckoutForm extends React.Component {
   state = {
     cartItems: [],
     address: "",
@@ -159,6 +165,12 @@ class Checkout extends React.Component {
                   onChange={this.handleChange}
                 />
 
+                {/* Card Element */}
+                <CardElement
+                  id="strip__input"
+                  onReady={input => input.focus()}
+                />
+
                 <button id="stripe__button" type="submit">
                   Submit
                 </button>
@@ -260,6 +272,16 @@ const ConfirmationModal = ({
       </Text>
     )}
   </Modal>
+);
+
+const CheckoutForm = injectStripe(_CheckoutForm);
+
+const Checkout = () => (
+  <StripeProvider apiKey="pk_test_7CyGictpNh1EO9hMCen5DDfm">
+    <Elements>
+      <CheckoutForm />
+    </Elements>
+  </StripeProvider>
 );
 
 export default Checkout;
