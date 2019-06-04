@@ -48,20 +48,31 @@ class App extends Component {
   }
 
   handleChange = ({ value }) => {
-    this.setState({ searchTerm: value });
+    this.setState({ searchTerm: value }, () => this.searchBrands());
   };
 
-  filteredBrands = ({ searchTerm, brands }) => {
-    return brands.filter(brand => {
-      return (
-        brand.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        brand.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+  searchBrands = async () => {
+    const response = await strapi.request("POST", "/graphql", {
+      data: {
+        query: `query {
+          brands(where: {
+            name_contains: "${this.state.searchTerm}"
+          }) {
+            _id
+            name
+            description
+            image {
+              url
+            }
+          }
+        }`
+      }
     });
-  };
 
+    this.setState({ brands: response.data.brands, loadingBrands: false });
+  };
   render() {
-    const { searchTerm, isLoadingBrands } = this.state;
+    const { searchTerm, isLoadingBrands, brands } = this.state;
 
     return (
       <Container>
@@ -102,7 +113,7 @@ class App extends Component {
           display="flex"
           justifyContent="around"
         >
-          {this.filteredBrands(this.state).map(brand => (
+          {brands.map(brand => (
             <Box paddingY={4} width={200} margin={2} key={brand._id}>
               <Card
                 image={
