@@ -52,7 +52,6 @@ class _CheckoutForm extends React.Component {
 
   handleConfirmOrder = async event => {
     event.preventDefault();
-    console.log("handleConfirmOrder");
 
     if (this.isFormEmpty(this.state)) {
       this.showToast("Fill in all fields");
@@ -63,7 +62,13 @@ class _CheckoutForm extends React.Component {
   };
 
   handleSubmitOrder = async () => {
-    const { cartItems, city, address, postalCode } = this.state;
+    const {
+      cartItems,
+      city,
+      address,
+      postalCode,
+      confirmationEmailAddress
+    } = this.state;
 
     const amount = calculateAmount(cartItems);
 
@@ -90,6 +95,15 @@ class _CheckoutForm extends React.Component {
         token
       });
 
+      await strapi.request("POST", "/email", {
+        data: {
+          to: confirmationEmailAddress,
+          subject: `Order Confirmation - BrewHaha ${new Date(Date.now())}`,
+          text: "Your order has been processed",
+          html: "<bold>Expect your roder to arrive in 2-3 shipping days</bold>"
+        }
+      });
+
       this.setState({ orderProcessing: false, modal: false });
       clearCart();
       this.showToast("Your order has been successfully submitted!", true);
@@ -106,8 +120,6 @@ class _CheckoutForm extends React.Component {
   };
 
   showToast = (toastMessage, redirect = false) => {
-    console.log("showToast(), redirect=" + redirect);
-
     this.setState({
       toast: true,
       toastMessage
@@ -130,8 +142,6 @@ class _CheckoutForm extends React.Component {
       modal,
       orderProcessing
     } = this.state;
-
-    toast && console.log("showing toast " + toastMessage);
 
     return (
       <Container>
