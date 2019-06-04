@@ -1,6 +1,4 @@
-"use strict";
-
-const stripe = require("stripe")("pk_test_7CyGictpNh1EO9hMCen5DDfm");
+'use strict';
 
 /**
  * Order.js controller
@@ -63,13 +61,20 @@ module.exports = {
       city
     } = ctx.request.body;
 
+    // This require() should usually be on top of each file,
+    // but strapi's loading queue does not load config object by the time
+    // this file is loaded
+    const stripe = require('stripe')(strapi.config.stripePrivateKey);
+
     // Send charge to Stripe
     const charge = await stripe.charges.create({
       amount: amount * 100,
-      currency: "usd",
+      currency: 'usd',
       description: `Order ${new Date(Date.now())} - User ${ctx.state.user._id}`,
       source: token
     });
+
+    console.log(charge);
 
     // Create order in database
     const order = await strapi.services.order.add({

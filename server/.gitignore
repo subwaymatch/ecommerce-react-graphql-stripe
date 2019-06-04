@@ -109,3 +109,4 @@ coverage
 ############################
 
 config/environments/development/database.json
+config/custom.json
