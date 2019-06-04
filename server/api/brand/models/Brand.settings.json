@@ -1,6 +1,6 @@
 {
   "connection": "default",
-  "collectionName": "Brand",
+  "collectionName": "",
   "info": {
     "name": "brand",
     "description": ""
@@ -10,8 +10,8 @@
   },
   "attributes": {
     "name": {
-      "required": true,
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "description": {
       "type": "text"

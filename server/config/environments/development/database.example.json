@@ -7,8 +7,8 @@
         "client": "mongo",
         "host": "cluster0-ii8fu.mongodb.net",
         "port": 27017,
-        "database": "server",
-        "username": "",
+        "database": "brewhaha",
+        "username": "subwaymatch",
         "password": "",
         "srv": true
       },
